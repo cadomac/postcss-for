@@ -82,9 +82,10 @@ module.exports = postcss.plugin('postcss-for', function (opts) {
         for ( var i = index; i * dir <= top * dir; i = i + by ) {
             var content = rule.clone();
             value[iterator] = i;
-            vars({ only: value })(content);
-            if (opts.nested) processLoops(content);
-            rule.parent.insertBefore(rule, content.nodes);
+            varsParse = postcss([vars({ only: value })]).process(content.nodes[0])
+            // vars({ only: value })(content);
+            if (opts.nested) processLoops(varsParse.result.root);
+            rule.parent.insertBefore(rule, varsParse.result.root);
         }
         if ( rule.parent ) rule.remove();
     };
